@@ -34,11 +34,12 @@ usvn_user@localhost
   before :each do
     # Set up the stubs for an instances call.
     Puppet::Util.stubs(:which).with('mysql').returns('/usr/bin/mysql')
-    described_class.stubs(:defaults_file).returns('--defaults-file=/root/.my.cnf')
-    described_class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT CONCAT(User, '@',Host) AS User FROM mysql.user"]).returns('joe@localhost')
-    described_class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, PASSWORD FROM mysql.user WHERE CONCAT(user, '@', host) = 'joe@localhost'"]).returns('10 0 0 0 *6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4')
-    described_class.instances
+    provider.class.stubs(:defaults_file).returns('--defaults-file=/root/.my.cnf')
+    provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT CONCAT(User, '@',Host) AS User FROM mysql.user"]).returns('joe@localhost')
+    provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, PASSWORD FROM mysql.user WHERE CONCAT(user, '@', host) = 'joe@localhost'"]).returns('10 0 0 0 *6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4')
   end
+
+  let(:instance) { provider.class.instances.first }
 
   describe 'self.instances' do
     it 'returns an array of users' do
@@ -70,7 +71,7 @@ usvn_user@localhost
 
   describe 'password_hash' do
     it 'returns a hash' do
-      provider.password_hash.should == '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4'
+      instance.password_hash.should == '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4'
     end
   end
 
@@ -85,7 +86,7 @@ usvn_user@localhost
 
   describe 'max_user_connections' do
     it 'returns max user connections' do
-      provider.max_user_connections.should == '10'
+      instance.max_user_connections.should == '10'
     end
   end
 
