@@ -21,7 +21,7 @@ describe 'mysql::db', :type => :define do
 
   it 'should subscribe to database if sql script is given' do
     params.merge!({'sql' => 'test_sql'})
-    should contain_exec('test_db-import').with_subscribe('Database[test_db]')
+    should contain_exec('test_db-import').with_subscribe('Mysql_database[test_db]')
   end
 
   it 'should only import sql script on creation if not enforcing' do
@@ -37,7 +37,7 @@ describe 'mysql::db', :type => :define do
   it 'should not create database and database user' do
     params.merge!({'ensure' => 'absent', 'host' => 'localhost'})
     should contain_mysql_database('test_db').with_ensure('absent')
-    should contain_database_user('testuser@localhost').with_ensure('absent')
+    should contain_mysql_user('testuser@localhost').with_ensure('absent')
   end
 
   it 'should create with an appropriate collate and charset' do

@@ -121,11 +121,11 @@ MySQL provider supports puppet resources command:
 
 The custom resources can be used in any other manifests:
 
-    database { 'mydb':
+    mysql_database { 'mydb':
       charset => 'latin1',
     }
 
-    database_user { 'bob@localhost':
+    mysql_user { 'bob@localhost':
       password_hash => mysql_password('foo')
     }
 

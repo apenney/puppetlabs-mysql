@@ -54,7 +54,7 @@ define mysql::db (
     collate  => $collate,
     provider => 'mysql',
     require  => [Class['mysql::server'],Package['mysql_client']],
-    before   => Database_user["${user}@${host}"],
+    before   => Mysql_user["${user}@${host}"],
   }
 
   $user_resource = {
@@ -62,13 +62,13 @@ define mysql::db (
     password_hash => mysql_password($password),
     provider      => 'mysql'
   }
-  ensure_resource('database_user', "${user}@${host}", $user_resource)
+  ensure_resource('mysql_user', "${user}@${host}", $user_resource)
 
   if $ensure == 'present' {
     database_grant { "${user}@${host}/${name}":
       privileges => $grant,
       provider   => 'mysql',
-      require    => Database_user["${user}@${host}"],
+      require    => Mysql_user["${user}@${host}"],
     }
 
     $refresh = ! $enforce_sql
